@@ -1,10 +1,10 @@
 ===============
-django-notifier
+django-notifier-plus
 ===============
 
-Send notifications (Email, SMS etc) and manage preferences and permissions per user and group.
+Send notifications (Email, Push, SMS etc) and manage preferences and permissions per user and group.
 
-See full documentation at http://django-notifier.rtfd.org/
+See full documentation at http://django-notifier-plus.rtfd.org/
 
 To register a notification::
 
@@ -20,7 +20,7 @@ Installation
 
 Install via ``pip``::
 
-    $ pip install django-notifier
+    $ pip install django-notifier-plus
 
 
 Setup

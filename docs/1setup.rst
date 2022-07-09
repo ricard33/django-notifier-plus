@@ -45,14 +45,8 @@ Setup
         )
 
 
-3. Run ``syncdb`` or ``migrate`` (if using South) to create the necessary tables in the database.
+3. Run ``migrate`` to create the necessary tables in the database.
     
-    ::
-
-        $ python manage.py syndb
-
-    If using South:
-
     ::
 
         $ python manage.py migrate

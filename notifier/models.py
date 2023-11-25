@@ -2,11 +2,12 @@
 ## Imports
 ###############################################################################
 # Python
-from collections import Iterable
+from collections.abc import Iterable
 from importlib import import_module
 
+from django.conf import settings
 # Django
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.models import Group, Permission
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import models
@@ -24,8 +25,8 @@ from notifier import managers
 ###############################################################################
 class BaseModel(models.Model):
     """Abstract base class with auto-populated created and updated fields. """
-    created = models.DateTimeField(default=now, db_index=True)
-    updated = models.DateTimeField(default=now, db_index=True)
+    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated = models.DateTimeField(auto_now=True, db_index=True)
 
     class Meta:
         abstract = True
@@ -51,7 +52,7 @@ class Backend(BaseModel):
     klass = models.CharField(max_length=500,
         help_text='Example: notifier.backends.EmailBackend')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def _get_backendclass(self):
@@ -101,7 +102,7 @@ class Notification(BaseModel):
 
     objects = managers.NotificationManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def check_perms(self, user):
@@ -240,7 +241,7 @@ class GroupPrefs(BaseModel):
     class Meta:
         unique_together = ('group', 'notification', 'backend')
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s:%s:%s' % (self.group, self.notification, self.backend)
 
 
@@ -251,7 +252,7 @@ class UserPrefs(BaseModel):
     Supercedes group setting.
     If notification preference is not explicitly set, then use group setting.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
     backend = models.ForeignKey(Backend, on_delete=models.CASCADE)
     notify = models.BooleanField(default=True)
@@ -261,7 +262,7 @@ class UserPrefs(BaseModel):
     class Meta:
         unique_together = ('user', 'notification', 'backend')
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s:%s:%s' % (self.user, self.notification, self.backend)
 
     def save(self, *args, **kwargs):
@@ -274,13 +275,13 @@ class SentNotification(BaseModel):
     """
     Record of every notification sent.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
     backend = models.ForeignKey(Backend, on_delete=models.CASCADE)
     success = models.BooleanField()
     read = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s:%s:%s' % (self.user, self.notification, self.backend)
 
 

@@ -19,9 +19,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Backend',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
-                ('updated', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created', models.DateTimeField(db_index=True, auto_now_add=True)),
+                ('updated', models.DateTimeField(db_index=True, auto_now=True)),
                 ('name', models.CharField(db_index=True, max_length=200, unique=True)),
                 ('display_name', models.CharField(max_length=200, null=True)),
                 ('description', models.CharField(max_length=500, null=True)),
@@ -35,9 +35,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Notification',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
-                ('updated', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created', models.DateTimeField(db_index=True, auto_now_add=True)),
+                ('updated', models.DateTimeField(db_index=True, auto_now=True)),
                 ('name', models.CharField(db_index=True, max_length=200, unique=True)),
                 ('display_name', models.CharField(max_length=200)),
                 ('public', models.BooleanField(default=True)),
@@ -51,9 +51,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SentNotification',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
-                ('updated', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created', models.DateTimeField(db_index=True, auto_now_add=True)),
+                ('updated', models.DateTimeField(db_index=True, auto_now=True)),
                 ('success', models.BooleanField()),
                 ('read', models.BooleanField(default=False)),
                 ('backend', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='notifier.backend')),
@@ -67,9 +67,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserPrefs',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
-                ('updated', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created', models.DateTimeField(db_index=True, auto_now_add=True)),
+                ('updated', models.DateTimeField(db_index=True, auto_now=True)),
                 ('notify', models.BooleanField(default=True)),
                 ('backend', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='notifier.backend')),
                 ('notification', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='notifier.notification')),
@@ -82,9 +82,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='GroupPrefs',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
-                ('updated', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created', models.DateTimeField(db_index=True, auto_now_add=True)),
+                ('updated', models.DateTimeField(db_index=True, auto_now=True)),
                 ('notify', models.BooleanField(default=True)),
                 ('backend', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='notifier.backend')),
                 ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auth.group')),

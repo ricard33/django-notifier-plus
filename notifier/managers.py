@@ -2,7 +2,7 @@
 ## Imports
 ###############################################################################
 # Python
-from collections import Iterable
+from collections.abc import Iterable
 
 # Django
 from django.db import models

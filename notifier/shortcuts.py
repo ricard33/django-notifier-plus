@@ -2,7 +2,7 @@
 ## Imports
 ###############################################################################
 # Python
-from collections import Iterable
+from collections.abc import Iterable
 
 # Django
 from django.contrib.auth.models import Group, Permission, User
@@ -54,8 +54,8 @@ def create_notification(name, display_name=None,
         n.name = name
         n.display_name = display_name
         n.public = public
-        n.permissions = permissions
-        n.backends = backends
+        n.permissions.set(permissions)
+        n.backends.set(backends)
         n.save()
 
     return n

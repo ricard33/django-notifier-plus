@@ -6,7 +6,6 @@ from smtplib import SMTPException
 
 # Django
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
@@ -33,7 +32,6 @@ class BaseBackend(object):
 
         self.context.update({
             'user': user,
-            'site': Site.objects.get_current()
         })
 
 

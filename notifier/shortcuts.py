@@ -3,9 +3,10 @@
 ###############################################################################
 # Python
 from collections.abc import Iterable
+from typing import List
 
 # Django
-from django.contrib.auth.models import Group, Permission, User
+from django.contrib.auth.models import AbstractUser, Group, Permission, User
 from django.db.models.query import QuerySet
 
 # User
@@ -15,8 +16,9 @@ from notifier.models import Notification, Backend, UserPrefs
 ###############################################################################
 ## Code
 ###############################################################################
-def create_notification(name, display_name=None,
-        permissions=None, backends=None, public=True):
+def create_notification(
+    name, display_name=None, permissions=None, backends=None, public=True, default_notify=True,
+):
     """
     Arguments
 
@@ -25,6 +27,7 @@ def create_notification(name, display_name=None,
         :permissions: list of permission names or objects
         :backends: list of backend names or objects
         :public: (boolean)
+        :default_notify: (boolean)
 
     Returns
         Notification object
@@ -46,14 +49,16 @@ def create_notification(name, display_name=None,
     try:
         n = Notification.objects.get(name=name)
     except Notification.DoesNotExist:
-        n = Notification.objects.create(name=name, display_name=display_name,
-            public=public)
+        n = Notification.objects.create(
+            name=name, display_name=display_name, public=public, default_notify=default_notify,
+        )
         n.permissions.add(*permissions)
         n.backends.add(*backends)
     else:
         n.name = name
         n.display_name = display_name
         n.public = public
+        n.default_notify = default_notify
         n.permissions.set(permissions)
         n.backends.set(backends)
         n.save()
@@ -61,12 +66,20 @@ def create_notification(name, display_name=None,
     return n
 
 
-def send_notification(name, users, context=None):
+def send_notification(
+    name: str,
+    users: List[AbstractUser],
+    message: str = None,
+    path: str = None,
+    context: dict = None,
+) -> None:
     """
     Arguments
 
         :name: notification name (string)
         :users: user object or list of user objects
+        :message: Resume displayed in notifications list
+        :path: [Optional] Path to the target page, used for clicks on notification
         :context: additional context for notification templates (dict)
 
     Returns
@@ -74,7 +87,7 @@ def send_notification(name, users, context=None):
         None
     """
     notification = Notification.objects.get(name=name)
-    return notification.send(users, context)
+    notification.send(users, message, path, context)
 
 
 def update_preferences(name, user, prefs_dict):
@@ -115,15 +128,14 @@ def clear_preferences(users):
 
 
 def _get_permission_queryset(permissions):
-    if (permissions and
-            not isinstance(permissions, QuerySet)):
+    if permissions and not isinstance(permissions, QuerySet):
         if isinstance(permissions, Permission):
             permissions = [permissions]
         else:
-            if isinstance(permissions, basestring):
+            if isinstance(permissions, str):
                 permissions = [permissions]
             elif isinstance(permissions, Iterable):
-                if not all(isinstance(x, basestring) for x in permissions):
+                if not all(isinstance(x, str) for x in permissions):
                     raise TypeError
             else:
                 raise TypeError
@@ -133,15 +145,14 @@ def _get_permission_queryset(permissions):
 
 
 def _get_backend_queryset(backends):
-    if (backends and
-            not isinstance(backends, QuerySet)):
+    if backends and not isinstance(backends, QuerySet):
         if isinstance(backends, Backend):
             backends = [backends]
         else:
-            if isinstance(backends, basestring):
+            if isinstance(backends, str):
                 backends = [backends]
             elif isinstance(backends, Iterable):
-                if not all(isinstance(x, basestring) for x in backends):
+                if not all(isinstance(x, str) for x in backends):
                     raise TypeError
             else:
                 raise TypeError

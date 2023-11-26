@@ -19,7 +19,7 @@ admin.site.register(models.Backend, BackendAdmin)
 
 
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'display_name')
+    list_display = ('name', 'display_name', 'public', 'default_notify')
     prepopulated_fields = {'name': ('display_name',)}
 admin.site.register(models.Notification, NotificationAdmin)
 
@@ -37,6 +37,7 @@ admin.site.register(models.UserPrefs, UserPrefsAdmin)
 
 
 class SentNotifcationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'notification', 'backend', 'success')
+    list_display = ('user', 'notification', 'backend', 'success', 'description')
+    list_filter = ('user', 'backend', 'notification', 'success')
     readonly_fields = ('user', 'notification', 'backend', 'success')
 admin.site.register(models.SentNotification, SentNotifcationAdmin)

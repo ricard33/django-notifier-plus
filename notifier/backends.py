@@ -7,7 +7,7 @@ from smtplib import SMTPException
 
 # Django
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template import TemplateDoesNotExist
 from django.template.loader import render_to_string
 
@@ -53,7 +53,11 @@ class EmailBackend(BaseBackend):
             notification.name,
             self.name,
         )
-        self.template_message = "notifier/%s_%s_message.txt" % (
+        self.template_message_text = "notifier/%s_%s_message.txt" % (
+            notification.name,
+            self.name,
+        )
+        self.template_message_html = "notifier/%s_%s_message.html" % (
             notification.name,
             self.name,
         )
@@ -65,8 +69,17 @@ class EmailBackend(BaseBackend):
         try:
             subject = render_to_string(self.template_subject, self.context)
             subject = "".join(subject.splitlines())
-            message = render_to_string(self.template_message, self.context)
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+            text = render_to_string(self.template_message_text, self.context)
+            try:
+                html = render_to_string(self.template_message_html, self.context)
+                msg = EmailMultiAlternatives(
+                    subject, text, settings.DEFAULT_FROM_EMAIL, [user.email]
+                )
+                msg.attach_alternative(html, "text/html")
+                msg.send()
+            except TemplateDoesNotExist as ex:
+                logger.warning("Template doesn't exist: %s", str(ex))
+                send_mail(subject, text, settings.DEFAULT_FROM_EMAIL, [user.email])
         except TemplateDoesNotExist as ex:
             logger.error("Template doesn't exist: %s", str(ex))
             return False
